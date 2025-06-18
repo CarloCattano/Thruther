@@ -13,22 +13,20 @@
         padding: 10px 60px;
         border: 1px solid #222;
         font-size: 0.5rem;
-
       }
       #greeting:empty {
         display: none;
       }
     </style>
     <script type="module">
-      import { backend } from 'declarations/backend';
+      import { backend } from "declarations/backend";
 
-      document.querySelector('form').addEventListener('submit', async (e) => {
+      document.querySelector("form").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById('tweetID').value.toString();
-        const greeting = await backend.get_pokemon_ditto();
-        document.getElementById('greeting').innerText = greeting;
+        const tweetID = document.getElementById("tweetID").value.toString();
+        let greeting = await backend.get_twitter_post(tweetID);
+        document.getElementById("greeting").innerText = greeting;
       });
-      
     </script>
   </head>
   <body>

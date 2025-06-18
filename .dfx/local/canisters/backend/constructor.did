@@ -10,7 +10,7 @@ type http_header =
    value: text;
  };
 service : {
-  get_pokemon_ditto: () -> (text);
+  get_twitter_post: (postId: text) -> (text);
   transform: (record {
                 context: blob;
                 response: http_request_result;
