@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SNAPSHOT TWEET</title>
+    <style>
+      body {
+        padding: 10px 60px;
+        font-family: sans-serif;
+        font-size: 1.2rem;
+      }
+      #greeting {
+        margin: 10px auto;
+        padding: 10px 60px;
+        border: 1px solid #222;
+        font-size: 0.5rem;
+
+      }
+      #greeting:empty {
+        display: none;
+      }
+    </style>
+    <script type="module">
+      import { backend } from 'declarations/backend';
+
+      document.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('tweetID').value.toString();
+        const greeting = await backend.get_pokemon_ditto();
+        document.getElementById('greeting').innerText = greeting;
+      });
+      
+    </script>
+  </head>
+  <body>
+    <main>
+      <form>
+        <label for="name">Enter Tweet id: &nbsp;</label>
+        <input id="tweetID" alt="tweet ID" type="text" />
+        <button type="submit">Submit</button>
+      </form>
+      <section id="greeting"></section>
+    </main>
+  </body>
+</html>
