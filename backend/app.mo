@@ -16,13 +16,13 @@ actor {
     };
   };
 
-  // Function to query the Pokémon API for "ditto"
-  public func get_pokemon_ditto() : async Text {
+// TODO - change frontend call 
+public func get_twitter_post(postId: Int) : async Text {
     let host : Text = "pokeapi.co";
-    let url = "https://" # host # "/api/v2/pokemon/ditto";
+    let url = "https://" # host # "/api/v2/pokemon/" # Int.toText(postId);
 
     let request_headers = [
-      { name = "User-Agent"; value = "ic-pokemon-client" },
+      { name = "User-Agent"; value = "twitter-api-client" },
     ];
 
     let http_request : IC.http_request_args = {
