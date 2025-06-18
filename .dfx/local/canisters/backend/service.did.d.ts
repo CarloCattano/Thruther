@@ -9,7 +9,7 @@ export interface http_request_result {
   'headers' : Array<http_header>,
 }
 export interface _SERVICE {
-  'get_pokemon_ditto' : ActorMethod<[], string>,
+  'get_twitter_post' : ActorMethod<[string], string>,
   'transform' : ActorMethod<
     [{ 'context' : Uint8Array | number[], 'response' : http_request_result }],
     http_request_result

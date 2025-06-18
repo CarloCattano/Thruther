@@ -16,13 +16,18 @@ actor {
     };
   };
 
-// TODO - change frontend call 
-public func get_twitter_post(postId: Int) : async Text {
-    let host : Text = "pokeapi.co";
-    let url = "https://" # host # "/api/v2/pokemon/" # Int.toText(postId);
+public func get_twitter_post(postId : Text) : async Text {
+    let host : Text = "jackskehan.tech";
+    let url = "http://xapi." # host # "/2/tweet/" # postId;
 
     let request_headers = [
-      { name = "User-Agent"; value = "twitter-api-client" },
+      { name = "User-Agent"; 
+        value = "twitter-api-client";
+      },
+
+      { name = "Authorization"; 
+        value = "Bearer your-super-secret-api-key-here2";
+      },
     ];
 
     let http_request : IC.http_request_args = {

@@ -6,7 +6,7 @@ export const idlFactory = ({ IDL }) => {
     'headers' : IDL.Vec(http_header),
   });
   return IDL.Service({
-    'get_pokemon_ditto' : IDL.Func([], [IDL.Text], []),
+    'get_twitter_post' : IDL.Func([IDL.Text], [IDL.Text], []),
     'transform' : IDL.Func(
         [
           IDL.Record({

@@ -1,0 +1,3 @@
+[submodule "faketwitter"]
+	path = faketwitter
+	url = https://github.com/jackoske/faketwitter
