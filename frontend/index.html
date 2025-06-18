@@ -1,44 +1,74 @@
 <!doctype html>
 <html>
   <head>
-    <title>SNAPSHOT TWEET</title>
+    <title>Snapshot Tweet</title>
     <style>
       body {
         padding: 10px 60px;
         font-family: sans-serif;
         font-size: 1.2rem;
       }
-      #greeting {
-        margin: 10px auto;
+      #response {
+        margin: 20px auto;
         padding: 10px 60px;
         border: 1px solid #222;
-        font-size: 0.5rem;
-
+        font-size: 0.9rem;
+        white-space: pre-wrap;
       }
-      #greeting:empty {
+      #response:empty {
         display: none;
       }
     </style>
-    <script type="module">
-      import { backend } from 'declarations/backend';
-
-      document.querySelector('form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('tweetID').value.toString();
-        const greeting = await backend.get_pokemon_ditto();
-        document.getElementById('greeting').innerText = greeting;
-      });
-      
-    </script>
   </head>
   <body>
     <main>
-      <form>
-        <label for="name">Enter Tweet id: &nbsp;</label>
-        <input id="tweetID" alt="tweet ID" type="text" />
-        <button type="submit">Submit</button>
+      <form id="tweetForm">
+        <label for="tweetURL">Enter Tweet URL:</label>
+        <input id="tweetURL" type="text" placeholder="https://twitter.com/user/status/1234567890" />
+        <button type="submit">Send Snapshot</button>
       </form>
-      <section id="greeting"></section>
+      <section id="response"></section>
     </main>
+    <script>
+      function extractTweetID(url) {
+        try {
+          const parsedUrl = new URL(url);
+          if (!['twitter.com', 'www.twitter.com', 'x.com', 'www.x.com'].includes(parsedUrl.hostname)) {
+            throw new Error('Not a valid Twitter or X URL');
+          }
+          const match = parsedUrl.pathname.match(/\/status\/(\d+)/);
+          if (match && match[1]) {
+            return match[1];
+          } else {
+            throw new Error('Tweet ID not found in URL');
+          }
+        } catch (err) {
+          throw new Error('Invalid URL: ' + err.message);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('tweetForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const urlInput = document.getElementById('tweetURL').value.trim();
+          if (!urlInput) return;
+
+          try {
+            const tweetID = extractTweetID(urlInput);
+            // Replace this with your actual backend call
+            const result = await mockBackendCall(tweetID);
+            document.getElementById('response').innerText = `Snapshot successful:\n${result}`;
+          } catch (err) {
+            document.getElementById('response').innerText = `Error: ${err.message}`;
+          }
+        });
+      });
+
+      // Mock function to simulate backend call
+      async function mockBackendCall(tweetID) {
+        // Replace this with your actual backend call logic
+        return `Mock response for tweet ID: ${tweetID}`;
+      }
+    </script>
   </body>
 </html>
