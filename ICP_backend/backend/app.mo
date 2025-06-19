@@ -54,12 +54,12 @@ actor {
     let tweet_content : Text = decoded_text;
 
     //let sentiment_json : Text = await LLM.analyze_sentiment(tweet_content);
-    // let sentiment = await analyzer.prompt(" Read and understand this output from twitter api. Format it in like"
-	// 									# "an object json file to be stored in a hashmap later( content, sentiment" 
-	// 									# "analisys, date , author), you also are in charge of the sentiment "
-	// 									# "analysis of the tweet(political inclination, energy, mood) " 
-	// 									# "ONLY OUTPUT JSON AND NOTHING ELSE " # tweet_content);
-    //Debug.print(sentiment);
+    let sentiment = await analyzer.prompt(" Read and understand this output from twitter api. Format it in like"
+										# "an object json file to be stored in a hashmap later( content, sentiment" 
+										# "analisys, date , author), you also are in charge of the sentiment "
+										# "analysis of the tweet(political inclination, energy, mood) " 
+										# "ONLY OUTPUT JSON AND NOTHING ELSE " # tweet_content);
+    Debug.print(sentiment);
     Debug.print(tweet_content);
 	tweet_content
   };
