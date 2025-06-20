@@ -1,42 +1,201 @@
 <!doctype html>
 <html>
   <head>
-    <title>SNAPSHOT TWEET</title>
-    <style>
-      body {
-        padding: 10px 60px;
-        font-family: sans-serif;
-        font-size: 1.2rem;
-      }
-      #greeting {
-        margin: 10px auto;
-        padding: 10px 60px;
-        border: 1px solid #222;
-        font-size: 0.5rem;
-      }
-      #greeting:empty {
-        display: none;
-      }
-    </style>
+    <title>PostChain Snapshot Tweet</title>
+    <link rel="stylesheet" href="styles.css" />
     <script type="module">
       import { backend } from "declarations/backend";
+      
+      // Toggle functionality - moved to global scope
+      window.currentMode = 'store'; // 'store' or 'search'
+      
+      window.setMode = (mode) => {
+        window.currentMode = mode;
+        updateUI();
+      };
+      
+      const updateUI = () => {
+        const storeForm = document.getElementById("fetchTweetForm");
+        const searchForm = document.getElementById("searchStoredForm");
+        const storeToggle = document.getElementById("storeToggle");
+        const searchToggle = document.getElementById("searchToggle");
+        
+        if (window.currentMode === 'store') {
+          // Store mode active - show store form, hide search form
+          storeForm.classList.remove('hidden');
+          searchForm.classList.add('hidden');
+          
+          // Toggle button states - store active (bright blue), search inactive (dark gray)
+          storeToggle.classList.remove('bg-gray-300', 'text-gray-500', 'opacity-60', 'hover:opacity-80', 'hover:bg-gray-400');
+          storeToggle.classList.add('bg-twitter-blue', 'text-white', 'shadow-md', 'hover:shadow-lg');
+          
+          searchToggle.classList.remove('bg-twitter-blue', 'text-white', 'shadow-md', 'hover:shadow-lg');
+          searchToggle.classList.add('bg-gray-300', 'text-gray-500', 'opacity-60', 'hover:opacity-80', 'hover:bg-gray-400');
+        } else {
+          // Search mode active - hide store form, show search form
+          storeForm.classList.add('hidden');
+          searchForm.classList.remove('hidden');
+          
+          // Toggle button states - search active (bright blue), store inactive (dark gray)
+          searchToggle.classList.remove('bg-gray-300', 'text-gray-500', 'opacity-60', 'hover:opacity-80', 'hover:bg-gray-400');
+          searchToggle.classList.add('bg-twitter-blue', 'text-white', 'shadow-md', 'hover:shadow-lg');
+          
+          storeToggle.classList.remove('bg-twitter-blue', 'text-white', 'shadow-md', 'hover:shadow-lg');
+          storeToggle.classList.add('bg-gray-300', 'text-gray-500', 'opacity-60', 'hover:opacity-80', 'hover:bg-gray-400');
+        }
+      };
 
-      document.querySelector("form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const tweetID = document.getElementById("tweetID").value.toString();
-        let greeting = await backend.get_twitter_post(tweetID);
-        document.getElementById("greeting").innerText = greeting;
+      const showLoading = () => {
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("statusMessage").innerText = "";
+      };
+
+      const hideLoading = () => {
+        document.getElementById("loading").style.display = "none";
+      };
+
+      const setStatus = (msg, isError = false) => {
+        const el = document.getElementById("statusMessage");
+        el.innerText = msg;
+        el.style.color = isError ? "red" : "green";
+      };
+
+      document
+        .querySelector("form#fetchTweetForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          showLoading();
+          const tweetID = document.getElementById("tweetID").value.toString();
+          try {
+            let greeting = await backend.get_twitter_post(tweetID);
+            document.getElementById("greeting").innerText = greeting;
+            setStatus("✅ Successfully stored tweet");
+          } catch (err) {
+            document.getElementById("greeting").innerText = "Error fetching tweet.";
+            setStatus("❌ Failed to fetch tweet", true);
+          }
+          hideLoading();
+        });
+
+      document
+        .querySelector("form#searchStoredForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          showLoading();
+
+          const storedTweetID = document
+            .getElementById("storedTweetID")
+            .value
+            .trim(); // 🧼 Clean spaces
+
+          try {
+            let storedData = await backend.get_stored(String(storedTweetID)); // 🎯 Ensure string
+            console.log("Searched for:", storedTweetID, "→ Got:", storedData);
+
+            // 🔍 Use explicit comparison
+            if (Array.isArray(storedData) && storedData.length > 0) {
+              document.getElementById("greeting").innerText = storedData;
+              setStatus("✅ Successfully pulled stored data");
+            } else {
+              document.getElementById("greeting").innerText =
+                "No stored data found for Tweet ID: " + storedTweetID;
+              setStatus("ℹ️ No data found");
+            }
+          } catch (err) {
+            console.error("Error in get_stored:", err);
+            document.getElementById("greeting").innerText = "Error searching data.";
+            setStatus("❌ Error searching stored data", true);
+          }
+
+          hideLoading();
+        });
+
+      // Initialize UI on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        updateUI();
       });
+
     </script>
   </head>
   <body>
+    <div class="header">
+      <span class="header-title">PostChain 
+        <svg class="inline w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </span>
+    </div>
+    
+    <!-- Toggle Button -->
+    <div class="flex justify-center mt-6 mb-4">
+      <div class="bg-white rounded-full p-1 shadow-lg flex">
+        <button 
+          id="storeToggle" 
+          onclick="setMode('store')"
+          class="relative inline-flex items-center px-6 py-3 rounded-full text-white font-semibold transition-all duration-300 ease-in-out bg-twitter-blue hover:shadow-lg transform hover:scale-105 shadow-md"
+        >
+          <span class="mr-2">Store</span>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+          </svg>
+        </button>
+        <button 
+          id="searchToggle" 
+          onclick="setMode('search')"
+          class="relative inline-flex items-center px-6 py-3 rounded-full text-gray-500 font-semibold transition-all duration-300 ease-in-out bg-gray-300 opacity-60 hover:opacity-80 hover:bg-gray-400 transform hover:scale-105"
+        >
+          <span class="mr-2">Search</span>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <main>
-      <form>
-        <label for="name">Enter Tweet id: &nbsp;</label>
-        <input id="tweetID" alt="tweet ID" type="text" />
-        <button type="submit">Submit</button>
+      <!-- Store Tweet Form -->
+      <form id="fetchTweetForm" class="transition-all duration-300 ease-in-out">
+        <label for="tweetID" class="text-twitter-blue font-semibold">Enter Tweet ID:</label>
+        <input 
+          id="tweetID" 
+          alt="tweet ID" 
+          type="text" 
+          placeholder="Enter tweet ID to store..."
+          class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-twitter-blue focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+        />
+        <button type="submit" class="bg-gradient-to-r from-twitter-blue to-twitter-dark text-white px-8 py-3 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+          Store Tweet
+        </button>
       </form>
-      <section id="greeting"></section>
+
+      <!-- Search Stored Data Form -->
+      <form id="searchStoredForm" class="transition-all duration-300 ease-in-out hidden">
+        <label for="storedTweetID" class="text-twitter-blue font-semibold">Search stored Tweet by ID:</label>
+        <input 
+          id="storedTweetID" 
+          alt="stored tweet ID" 
+          type="text" 
+          placeholder="Enter tweet ID to search..."
+          class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-twitter-blue focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+        />
+        <button type="submit" class="bg-gradient-to-r from-twitter-blue to-twitter-dark text-white px-8 py-3 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+          Search Stored
+        </button>
+      </form>
+
+      <div id="loading" class="hidden mt-6 text-center">
+        <div class="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-full">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Loading...
+        </div>
+      </div>
+
+      <div id="statusMessage" class="mt-6 text-center font-bold text-lg transition-colors duration-300"></div>
+
+      <section id="greeting" class="mt-8 w-full max-w-2xl"></section>
     </main>
   </body>
 </html>

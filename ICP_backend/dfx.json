@@ -3,12 +3,7 @@
     "backend": {
       "main": "backend/app.mo",
       "type": "motoko",
-      "dependencies": ["llm_analyzer"],
       "args": "--enhanced-orthogonal-persistence"
-    },
-    "llm_analyzer": {
-      "main": "backend/llm_analyzer.mo",
-      "type": "motoko"
     },
     "frontend": {
       "dependencies": ["backend"],
@@ -18,7 +13,7 @@
       "source": ["frontend/dist"],
       "type": "assets"
     },
-	"llm": {
+	  "llm": {
       "candid": "https://github.com/dfinity/llm/releases/latest/download/llm-canister-ollama.did",
       "type": "custom",
       "specified_id": "w36hm-eqaaa-aaaal-qr76a-cai",
