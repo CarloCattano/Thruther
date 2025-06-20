@@ -31,6 +31,14 @@ Built entirely from scratch during the AI Summit Hackathon 2025, ChainPost addre
 - **AI**: LLM Canister with Ollama integration
 - **Mock API**: Custom Twitter API simulation
 
+## 🏆 Achievements
+
+**First Place Winner** at [DoraHacks AI Agent Summit for ICP](https://dorahacks.io/hackathon/ais/buidl)
+
+**Project**: [https://dorahacks.io/buidl/26945](https://dorahacks.io/buidl/26945)
+
+**Full Project**: [https://github.com/CarloCattano/Thruther](https://github.com/CarloCattano/Thruther)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
